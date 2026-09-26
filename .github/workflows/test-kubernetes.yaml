@@ -26,8 +26,10 @@ jobs:
     steps:
     - name: Isolate the test cluster's state
       run: |
-        printf 'KUBECONFIG=%s\n' "$RUNNER_TEMP/dnsimple-kubeconfig" >> "$GITHUB_ENV"
-        printf 'MINIKUBE_HOME=%s\n' "$RUNNER_TEMP/minikube" >> "$GITHUB_ENV"
+        {
+          printf 'KUBECONFIG=%s\n' "$RUNNER_TEMP/dnsimple-kubeconfig"
+          printf 'MINIKUBE_HOME=%s\n' "$RUNNER_TEMP/minikube"
+        } >> "$GITHUB_ENV"
 
     - uses: actions/checkout@v7
 
