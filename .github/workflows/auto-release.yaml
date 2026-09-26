@@ -7,7 +7,7 @@ on:
 
 jobs:
   check:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, workstation-ci]
     outputs:
       has_changes: ${{ steps.check-prs.outputs.has_changes }}
       non_patch_prs: ${{ steps.check-prs.outputs.non_patch_prs }}
@@ -86,7 +86,7 @@ jobs:
   update:
     needs: check
     if: ${{ needs.check.outputs.has_changes == 'true' }}
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, workstation-ci]
     outputs:
       chart: ${{ steps.new-versions.outputs.chart }}
       app: ${{ steps.new-versions.outputs.app }}
@@ -202,7 +202,7 @@ jobs:
       - check
       - trigger-release
     if: ${{ always() && needs.check.outputs.non_patch_prs != 'true' }}
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, workstation-ci]
     steps:
     - uses: actions/checkout@v7
     
