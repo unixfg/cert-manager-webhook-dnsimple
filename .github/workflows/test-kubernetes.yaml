@@ -11,9 +11,11 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, workstation-ci]
+    env:
+      MINIKUBE_PROFILE: ci-${{ github.run_id }}-${{ strategy.job-index }}
     strategy:
-      max-parallel: 3
+      max-parallel: 1
       matrix:
         # Always quote versions to prevent int truncation (1.30 -> 1.3)
         # https://kubernetes.io/releases
@@ -22,12 +24,27 @@ jobs:
         cm-version: ["1.18.6", "1.19.4"]
 
     steps:
+    - name: Isolate the test cluster's state
+      run: |
+        {
+          printf 'KUBECONFIG=%s\n' "$RUNNER_TEMP/dnsimple-kubeconfig"
+          printf 'MINIKUBE_HOME=%s\n' "$RUNNER_TEMP/minikube"
+        } >> "$GITHUB_ENV"
+
     - uses: actions/checkout@v7
 
     - name: Start minikube
-      uses: medyagh/setup-minikube@master
+      uses: medyagh/setup-minikube@e54c6bfce85fe75714fc113f1fa200c23338732b
       with:
+        minikube-version: '1.39.0'
         kubernetes-version: ${{ matrix.k8s-version }}
+        driver: podman
+        container-runtime: containerd
+        cpus: 2
+        memory: 2048m
+        cache: false
+        listen-address: 127.0.0.1
+        start-args: --rootless --profile=${{ env.MINIKUBE_PROFILE }}
 
     - name: Install cert-manager, patch upstream dns servers, wait for readiness
       run: |
@@ -149,3 +166,7 @@ jobs:
         echo "::error title=Certificate timed out::Have timed out waiting for certificate"
         dump_diagnostics
         exit 1
+
+    - name: Remove the job's test cluster
+      if: always()
+      run: minikube delete --profile "$MINIKUBE_PROFILE"
