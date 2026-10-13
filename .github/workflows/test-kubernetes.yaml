@@ -11,7 +11,7 @@ on:
 
 jobs:
   test:
-    runs-on: [self-hosted, Linux, X64, workstation-ci]
+    runs-on: ubuntu-24.04
     env:
       MINIKUBE_PROFILE: ci-${{ github.run_id }}-${{ strategy.job-index }}
     strategy:
@@ -38,13 +38,13 @@ jobs:
       with:
         minikube-version: '1.39.0'
         kubernetes-version: ${{ matrix.k8s-version }}
-        driver: podman
+        driver: docker
         container-runtime: containerd
         cpus: 2
         memory: 2048m
         cache: false
         listen-address: 127.0.0.1
-        start-args: --rootless --profile=${{ env.MINIKUBE_PROFILE }}
+        start-args: --profile=${{ env.MINIKUBE_PROFILE }}
 
     - name: Install cert-manager, patch upstream dns servers, wait for readiness
       run: |
