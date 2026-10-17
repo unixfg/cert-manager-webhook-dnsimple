@@ -35,6 +35,27 @@
   },
   "packageRules": [
     {
+      "description": "Apply the release labels required by this repository's PR checks",
+      "matchUpdateTypes": [
+        "digest",
+        "pin",
+        "pinDigest",
+        "patch",
+        "lockFileMaintenance"
+      ],
+      "addLabels": [
+        "patch"
+      ]
+    },
+    {
+      "matchUpdateTypes": [
+        "minor"
+      ],
+      "addLabels": [
+        "minor"
+      ]
+    },
+    {
       "description": "Group routine GitHub Actions updates",
       "matchManagers": [
         "github-actions"
@@ -64,7 +85,8 @@
       "groupName": null,
       "automerge": false,
       "addLabels": [
-        "major-update"
+        "major-update",
+        "major"
       ]
     }
   ],
