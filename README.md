@@ -71,6 +71,16 @@ The Helm chart accepts the following values:
 | `certManager.serviceAccountName`   | ✔️       | The service account cert-manager runs under     | `cert-manager`                          |
 
 
+## Dependency updates
+
+Renovate is explicitly enabled for this fork. Update PRs run from midnight until
+noon in `America/Chicago`, with at most two ordinary update PRs open at once.
+Docker and Helm releases wait three days when a release timestamp is available;
+security updates bypass the daily window and release-age delay. Kubernetes
+dependency grouping is preserved. All updates require a manual merge because
+the existing credential-dependent PR tests are conditional and are not required
+merge checks.
+
 ## Testing
 All cert-manager webhooks have to pass the DNS01 provider conformance testing suite.
 
